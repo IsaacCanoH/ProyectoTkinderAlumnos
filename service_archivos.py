@@ -1,5 +1,8 @@
 from tkinter import messagebox as mb, filedialog as fd
 import subprocess as sp
+import os
+import json
+import xml.etree.ElementTree as ET
 
 
 def crear_backup():
@@ -140,3 +143,91 @@ def importar_csv():
         mb.showinfo("Exito", "Importacion de CSV realizada correctamente")
     except Exception as e:
         mb.showerror("Error", f"Ocurrio un error:\n{e}")
+
+def exportar_xml():
+    ruta = fd.asksaveasfilename(
+        title="Guardar XML",
+        defaultextension=".xml",
+        filetypes=[("Archivos XML", "*.xml")]
+    )
+
+    if not ruta:
+        return
+    
+    temp_json = "temp_export.json"
+
+    try:
+        comando = [
+            "mongoexport",
+            "--db=BD_GrupoAlumno",
+            "--collection=Grupo",
+            "--type=json",
+            "--fields=_id,cveGru,nomGru",
+            f"--out={temp_json}"
+        ]
+        sp.run(comando, check=True)
+
+        root = ET.Element("Grupos")
+        
+        with open(temp_json, "r", encoding="utf-8") as archivo_json:
+            for linea in archivo_json:
+                datos = json.loads(linea.strip())
+                grupo_xml = ET.SubElement(root, "Grupo")
+
+                ET.SubElement(grupo_xml, "_id").text = str(datos.get("_id", ""))
+                ET.SubElement(grupo_xml, "cveGru").text = str(datos.get("cveGru", ""))
+                ET.SubElement(grupo_xml, "nomGru").text = str(datos.get("nomGru", ""))
+
+        tree = ET.ElementTree(root)
+        tree.write(ruta, encoding="utf-8", xml_declaration=True)
+
+        mb.showinfo("Éxito", "Exportación de XML realizada correctamente")
+
+    except Exception as e:
+        mb.showerror("Error", f"Ocurrió un error:\n{e}")
+        
+    finally:
+        if os.path.exists(temp_json):
+            os.remove(temp_json)
+            
+def importar_xml():
+    ruta = fd.askopenfilename(
+        title="Importar XML",
+        filetypes=[("Archivos XML", "*.xml")]
+    )
+
+    if not ruta:
+        return
+
+    temp_json = "temp_import.json"
+
+    try:
+        tree = ET.parse(ruta)
+        root = tree.getroot()
+
+        with open(temp_json, "w", encoding="utf-8") as archivo_json:
+            for grupo in root:
+                datos = {}
+
+                for campo in grupo:
+                    datos[campo.tag] = campo.text.strip() if campo.text else ""
+
+                if datos:
+                    archivo_json.write(json.dumps(datos, ensure_ascii=False) + "\n")
+
+        comando = [
+            "mongoimport",
+            "--db=BD_GrupoAlumno",
+            "--collection=Grupo",
+            f"--file={temp_json}"
+        ]
+        sp.run(comando, check=True)
+
+        mb.showinfo("Éxito", "Importación de XML realizada correctamente")
+
+    except Exception as e:
+        mb.showerror("Error", f"Ocurrió un error:\n{e}")
+
+    finally:
+        if os.path.exists(temp_json):
+            os.remove(temp_json)

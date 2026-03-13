@@ -1,6 +1,6 @@
 import tkinter as tk
 from service_grupos import agregar_grupo, eliminar_grupos, modificar_grupo
-from service_archivos import crear_backup, restaurar_backup, exportar_csv, importar_csv, exportar_json, importar_json
+from service_archivos import crear_backup, restaurar_backup, exportar_csv, importar_csv, exportar_json, importar_json, exportar_xml, importar_xml
 
 ventana = tk.Tk()
 ventana.title("Panel Administrativo Alumno")
@@ -67,7 +67,7 @@ btn_eliminar_grupos = tk.Button(ventana,
 btn_eliminar_grupos.grid(row=7, column=1)
 
 btn_restaurar_grupos = tk.Button(ventana,
-                                text="Eliminar todos los Grupos",
+                                text="Restaurar todos los Grupos",
                                 font=("Arial", 12, "bold"),
                                 bg="white", fg="black",
                                 command=restaurar_backup)
@@ -89,5 +89,21 @@ btn_importar_csv = tk.Button(ventana,
                                 command=importar_csv)
 
 btn_importar_csv.grid(row=5, column=2)
+
+btn_exportar_xml = tk.Button(ventana,
+                                text="Exportar XML",
+                                font=("Arial", 12, "bold"),
+                                bg="white", fg="black",
+                                command=exportar_xml)
+
+btn_exportar_xml.grid(row=4, column=3)
+
+btn_importar_xml = tk.Button(ventana,
+                                text="Importar XML",
+                                font=("Arial", 12, "bold"),
+                                bg="white", fg="black",
+                                command=importar_xml)
+
+btn_importar_xml.grid(row=5, column=3)
 
 ventana.mainloop()
