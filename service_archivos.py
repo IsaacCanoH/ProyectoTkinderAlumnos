@@ -17,7 +17,7 @@ def crear_backup():
         comando = [
             "mongodump",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             f"--out={ruta}"
         ]
         sp.run(comando, check=True)
@@ -65,7 +65,7 @@ def exportar_json():
         comando = [
             "mongoexport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             f"--out={ruta}"
         ]
         sp.run(comando, check=True)
@@ -87,7 +87,7 @@ def importar_json():
         comando = [
             "mongoimport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             f"--file={ruta}"
         ]
         sp.run(comando, check=True)
@@ -110,9 +110,9 @@ def exportar_csv():
         comando = [
             "mongoexport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             "--type=CSV",
-            "--fields=_id,cveGru,nomGru",
+            "--fields=_id,cveAlu,nomAlu,edaAlu,cveGru",
             f"--out={ruta}"
         ]
         sp.run(comando, check=True)
@@ -134,7 +134,7 @@ def importar_csv():
         comando = [
             "mongoimport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             "--type=CSV",
             f"--file={ruta}",
             "--headerline"
@@ -160,7 +160,7 @@ def exportar_xml():
         comando = [
             "mongoexport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             "--type=json",
             "--fields=_id,cveGru,nomGru",
             f"--out={temp_json}"
