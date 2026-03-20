@@ -162,21 +162,23 @@ def exportar_xml():
             "--db=BD_GrupoAlumno",
             "--collection=Alumno",
             "--type=json",
-            "--fields=_id,cveGru,nomGru",
+            "--fields=_id,cveAlu,nomAlu,edaAlu,cveGru",
             f"--out={temp_json}"
         ]
         sp.run(comando, check=True)
 
-        root = ET.Element("Grupos")
+        root = ET.Element("Alumnos")
         
         with open(temp_json, "r", encoding="utf-8") as archivo_json:
             for linea in archivo_json:
                 datos = json.loads(linea.strip())
-                grupo_xml = ET.SubElement(root, "Grupo")
+                alumno_xml = ET.SubElement(root, "Alumno")
 
-                ET.SubElement(grupo_xml, "_id").text = str(datos.get("_id", ""))
-                ET.SubElement(grupo_xml, "cveGru").text = str(datos.get("cveGru", ""))
-                ET.SubElement(grupo_xml, "nomGru").text = str(datos.get("nomGru", ""))
+                ET.SubElement(alumno_xml, "_id").text = str(datos.get("_id", ""))
+                ET.SubElement(alumno_xml, "cveAlu").text = str(datos.get("cveAlu", ""))
+                ET.SubElement(alumno_xml, "nomAlu").text = str(datos.get("nomAlu", ""))
+                ET.SubElement(alumno_xml, "edaAlu").text = str(datos.get("edaAlu", ""))
+                ET.SubElement(alumno_xml, "cveGru").text = str(datos.get("cveGru", ""))
 
         tree = ET.ElementTree(root)
         tree.write(ruta, encoding="utf-8", xml_declaration=True)
@@ -206,10 +208,10 @@ def importar_xml():
         root = tree.getroot()
 
         with open(temp_json, "w", encoding="utf-8") as archivo_json:
-            for grupo in root:
+            for alumno in root:
                 datos = {}
 
-                for campo in grupo:
+                for campo in alumno:
                     datos[campo.tag] = campo.text.strip() if campo.text else ""
 
                 if datos:
@@ -218,7 +220,7 @@ def importar_xml():
         comando = [
             "mongoimport",
             "--db=BD_GrupoAlumno",
-            "--collection=Grupo",
+            "--collection=Alumno",
             f"--file={temp_json}"
         ]
         sp.run(comando, check=True)

@@ -14,13 +14,20 @@ def abrir_ventana_resultado(resultado):
     
     # Añade widgets a la ventana emergente
 
-    lbl_CveGru=tk.Label(ventana_emergente,text=f"Clave de Grupo: {datos['cveGru']}",font=("Arial",11))
+    lbl_CveGru=tk.Label(ventana_emergente,text=f"Clave de Alumno: {datos['cveAlu']}",font=("Arial",11))
     lbl_CveGru.grid(row=1,column=0)
 
-    lbl_NomGru=tk.Label(ventana_emergente,text=f"Nombre de Grupo: {datos['nomGru']}",font=("Arial",11))
+    lbl_NomGru=tk.Label(ventana_emergente,text=f"Nombre de Alumno: {datos['nomAlu']}",font=("Arial",11))
     lbl_NomGru.grid(row=2,column=0)
     
+    lbl_NomGru=tk.Label(ventana_emergente,text=f"Edad de Alumno: {datos['edaAlu']}",font=("Arial",11))
+    lbl_NomGru.grid(row=3,column=0)
+
+    lbl_NomGru=tk.Label(ventana_emergente,text=f"Clave de Grupo: {datos['cveGru']}",font=("Arial",11))
+    lbl_NomGru.grid(row=4,column=0)
+    
     boton_cerrar = tk.Button(ventana_emergente, text="Cerrar", command=ventana_emergente.destroy)
+    boton_cerrar.grid(row=5, column=0, pady=10)
 
 def agregar_alumno(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru):
     cveAlu = txt_cveAlu.get().strip()
@@ -67,7 +74,7 @@ def modificar_alumno(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru):
         resultado = alumnos.update_one(
             {"cveAlu": cveAlu},
             {   "$set": {
-                    "nomGru": nuevo_nomAlu,
+                    "nomAlu": nuevo_nomAlu,
                     "edaAlu": nuevo_edaAlu,
                     "cveGru": nuevo_cveGru,
                 }
@@ -89,45 +96,47 @@ def modificar_alumno(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru):
     except Exception as e:
         mb.showerror("Error", f"Ocurrió un error:\n{e}")
 
-def eliminar_grupo(txt_cveGru, txt_nomGru):
-    cveGru = txt_cveGru.get().strip()
-    nomGru = txt_nomGru.get().strip()
+def eliminar_alumno(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru):
+    cveAlu = txt_cveAlu.get().strip()
+    nomAlu = txt_nomAlu.get().strip()
 
     query = {}
-    if cveGru:
-        query = {"cveGru": cveGru}
-    elif nomGru:
-        query = {"nomGru": nomGru}
+    if cveAlu:
+        query = {"cveAlu": cveAlu}
+    elif nomAlu:
+        query = {"nomAlu": nomAlu}
 
     if not query:
-        mb.showwarning("Atención", "Ingresa la Clave o Nombre del grupo que desee Eliminar.")
+        mb.showwarning("Atención", "Ingresa la Clave o Nombre del alumno que desee Eliminar.")
         return
 
     try:
         resultado = alumnos.delete_one(query)
         
         if resultado.deleted_count > 0:
-            mb.showinfo("Eliminado", f"Se eliminó el Grupo correctamente.")
-            limpiar(txt_cveGru, txt_nomGru)
+            mb.showinfo("Eliminado", f"Se eliminó el Alumno correctamente.")
+            limpiar(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru)
         else:
-            mb.showerror("Error", "¡No se encontró el Grupo para Eliminar!")
+            mb.showerror("Error", "¡No se encontró el Alumno para Eliminar!")
             
     except Exception as e:
         mb.showerror("Error", f"Error al intentar eliminar en la base de datos:\n{e}")
        
-def limpiar(txt_cveGru,txt_nomGru):
+def limpiar(txt_cveAlu,txt_nomAlu,txt_edaAlu,txt_cveGru):
+    txt_cveAlu.delete(0, tk.END)
+    txt_nomAlu.delete(0, tk.END)
+    txt_edaAlu.delete(0, tk.END)
     txt_cveGru.delete(0, tk.END)
-    txt_nomGru.delete(0, tk.END)
         
-def buscar_grupo(txt_cveGru, txt_nomGru):
-    cveGru = txt_cveGru.get().strip()
-    nomGru = txt_nomGru.get().strip()
+def buscar_alumno(txt_cveAlu, txt_nomAlu):
+    cveAlu = txt_cveAlu.get().strip()
+    nomAlu = txt_nomAlu.get().strip()
     
     query = {}
-    if cveGru:
-        query = {"cveGru": cveGru}
-    elif nomGru:
-        query = {"nomGru": nomGru}
+    if cveAlu:
+        query = {"cveAlu": cveAlu}
+    elif nomAlu:
+        query = {"nomAlu": nomAlu}
     
     if not query:
         mb.showwarning("Campo vacío", "Ingresa Clave o Nombre para Buscar")

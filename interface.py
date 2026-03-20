@@ -1,5 +1,12 @@
 import tkinter as tk
-from service_grupos import agregar_alumno, eliminar_alumnos, modificar_alumno, buscar_grupo, limpiar, eliminar_grupo
+from service_alumnos import (
+    agregar_alumno, 
+    eliminar_alumnos, 
+    modificar_alumno, 
+    buscar_alumno, 
+    limpiar, 
+    eliminar_alumno
+    )
 from service_archivos import (
     crear_backup, restaurar_backup,
     exportar_csv, importar_csv,
@@ -47,7 +54,7 @@ btn_buscar = tk.Button(
     text="Buscar",
     font=("Arial", 12, "bold"),
     bg="white", fg="black",
-    # command=lambda: buscar_grupo(txt_cveGru, txt_nomGru)
+    command=lambda: buscar_alumno(txt_cveAlu, txt_nomAlu)
 )
 btn_buscar.grid(row=2, column=3)
 
@@ -56,7 +63,7 @@ btn_limpiar = tk.Button(
     text="Limpiar",
     font=("Arial", 12, "bold"),
     bg="white", fg="black",
-    command=limpiar
+    command=lambda: limpiar(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru)
 )
 btn_limpiar.grid(row=3, column=3)
 
@@ -65,7 +72,7 @@ btn_eliminar = tk.Button(
     text="Eliminar",
     font=("Arial", 12, "bold"),
     bg="white", fg="black",
-    # command=lambda: eliminar_grupo(txt_cveGru, txt_nomGru)
+    command=lambda: eliminar_alumno(txt_cveAlu, txt_nomAlu, txt_edaAlu, txt_cveGru)
 )
 btn_eliminar.grid(row=4, column=3)
 
