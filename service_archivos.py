@@ -212,7 +212,18 @@ def importar_xml():
                 datos = {}
 
                 for campo in alumno:
-                    datos[campo.tag] = campo.text.strip() if campo.text else ""
+                    valor = campo.text.strip() if campo.text else ""
+                    
+                    # --- INICIO DE LA MEJORA ---
+                    if campo.tag == "_id":
+                        # Si el ID tiene 24 caracteres, es muy probable que sea un ObjectId de Mongo
+                        if len(valor) == 24 and valor.isalnum():
+                            datos["_id"] = {"$oid": valor}
+                        else:
+                            datos["_id"] = valor # Si es como 'GSI0566', lo dejamos como texto normal
+                    else:
+                        datos[campo.tag] = valor
+                    # --- FIN DE LA MEJORA ---
 
                 if datos:
                     archivo_json.write(json.dumps(datos, ensure_ascii=False) + "\n")
@@ -225,7 +236,7 @@ def importar_xml():
         ]
         sp.run(comando, check=True)
 
-        mb.showinfo("Éxito", "Importación de XML realizada correctamente")
+        mb.showinfo("Éxito", "Importación de XML realizada correctamente conservando los tipos de ID")
 
     except Exception as e:
         mb.showerror("Error", f"Ocurrió un error:\n{e}")
